@@ -45,8 +45,10 @@ case "$1" in
     #Добавление шлюза
     ip route add default via $6
     echo "Шлюз добавлен.";;
--k) ;;
--d) ;;
+-k) 
+    kill -9 $(lsof -t -i:$2);;
+-d) 
+    cat /proc/net/dev;;
 *) echo "$1 is not an option" ;;
 esac
 shift
