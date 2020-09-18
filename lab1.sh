@@ -16,8 +16,10 @@ case "$1" in
 -n) ;;
 -t) ;;
 -s) ;;
--k) ;;
--d) ;;
+-k) 
+    kill -9 $(lsof -t -i:$2);;
+-d) 
+    cat /proc/net/dev;;
 *) echo "$1 is not an option" ;;
 esac
 shift
