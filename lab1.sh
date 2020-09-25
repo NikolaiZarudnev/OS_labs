@@ -21,7 +21,7 @@ case "$1" in
         do
             #Включение интерфейса
             sudo ip link set $intrfc up
-            echo $intrfc "- switch on"
+            #echo $intrfc "- switch on"
         done
     elif [[ "$2" == "off" ]]; then
         shift
@@ -30,19 +30,28 @@ case "$1" in
         do
             #Отключение интерфейса
             sudo ip link set $intrfc down
-            echo $intrfc "- switch off"
+            #echo $intrfc "- switch off"
         done
     else
         echo "./lab1.sh -t on/off <name>"
     fi;;
 -s)
     #добавление IP/Mask для сетевого интерфейса
-    ip addr add $3/$4 dev $5
-    echo "IP/Mask добавлен."
+    if (($# == 5)); then
+        ip addr add $2/$3 dev $4
+        if (($? == 0)); then
+            echo "IP/Mask добавлен."
+        fi
 
-    #Добавление шлюза
-    ip route add default via $6
-    echo "Шлюз добавлен.";;
+        #Добавление шлюза
+        ip route add default via $5
+        if (($? == 0)); then
+            echo "Шлюз добавлен."
+        fi
+    else
+        echo "Недостатоно параметров"
+        echo "./lab1.sh -s <ip> <mask> <name> <gateway>"
+    fi;;
 -k) 
     kill -9 $(lsof -t -i:$2);;
 -d) 
