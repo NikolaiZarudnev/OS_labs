@@ -46,7 +46,15 @@ case "$1" in
 -k) 
     kill -9 $(lsof -t -i:$2);;
 -d) 
-    cat /proc/net/dev;;
+    cat /proc/net/dev
+    name=$(ls /sys/class/net)
+    printf "Interfaces\t\tReceive\t\t\tTransmit\n"
+    printf "\t\tbytes\t\tpackets\t\t\tbytes\t\tpackets\n"
+    for var in $name
+    do
+        echo -e "$(cat /proc/net/dev | grep $var | awk '{print($1 "\t\t" $2 "\t\t" $3 "\t\t\t" $10 "\t\t" $11)}')"
+    done
+    echo;;
 *) echo "'$1' is not an option" ;;
 esac
 
