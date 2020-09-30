@@ -44,9 +44,7 @@ int my_copy(const char *arg1, const char *arg2)
 
 int main(int argc, char const *argv[])
 {
-    //my_remove("asd/test1.txt", "qwe2");
-
-    my_copy(argv[1], argv[2]);
+    
 
     // if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h"))
     // {
@@ -59,10 +57,11 @@ int main(int argc, char const *argv[])
     //     printf("hello\n");
     //     my_remove(argv[2], argv[3]);
     // }
-    // printf("asdasd");
+    
     /*replace file*/
 
     /*copy file*/
+    //my_copy(argv[1], argv[2]);
 
     /*delete file*/
 
