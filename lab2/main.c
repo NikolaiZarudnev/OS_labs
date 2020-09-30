@@ -4,6 +4,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <string.h>
+#include <ctype.h>
 
 int my_copy(const char *arg1, const char *arg2)
 {
@@ -25,7 +26,7 @@ int my_copy(const char *arg1, const char *arg2)
     fh2 = creat(arg3, __S_IWRITE | __S_IREAD);
     if (fh2 == -1)
     {
-        printf("faile is not open\n");
+        printf("fail is not open\n");
         return -1;
     }
     
@@ -42,9 +43,26 @@ int my_copy(const char *arg1, const char *arg2)
     return 0;
 }
 
+int list_proc(){
+
+    struct dirent *pDirent;
+    DIR *pDir = opendir ("/proc");
+    while ((pDirent = readdir(pDir)) != NULL) 
+    {   
+        if (isdigit(pDirent->d_name[0]))
+        {
+            printf ("%s\n", pDirent->d_name);
+        }
+    }
+    
+    closedir (pDir);
+
+    return 0;
+}
+
 int main(int argc, char const *argv[])
 {
-    
+    list_proc(argv[1]);
 
     // if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h"))
     // {
@@ -68,12 +86,21 @@ int main(int argc, char const *argv[])
     /*total size*/
 
     /*display all files in the dir*/
-    /*struct dirent *pDirent;
+
+    /*
+
+    struct dirent *pDirent;
+
     DIR *list_dir = opendir(arg2);
     while ((pDirent = readdir(list_dir)) != NULL) {
         printf ("[%s]\n", pDirent->d_name);
-    }*/
+    }
+    
+    */
+
     /*list all proc from /procfs */
+    list_proc();
+
     return 0;
 }
 
