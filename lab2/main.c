@@ -60,6 +60,27 @@ int list_proc(){
     return 0;
 }
 
+int count_dir_size(char *dir)
+{
+    struct dirent *pD;
+    struct stat file_stat;
+    int size = 0;
+
+    DIR *pDirec = opendir(dir);
+    while ((pD = readdir(pDirec)) != NULL)
+    {
+        if (stat(pD->d_name, &file_stat) == 0)
+        {
+            size += file_stat.st_size;
+        }
+
+    }
+    printf("Общий размер файлов каталога %s равен %d байт\n\n", dir, size);
+    closedir(pDirec);
+
+    return 0;
+}
+
 int main(int argc, char const *argv[])
 {
     list_proc(argv[1]);
@@ -84,7 +105,7 @@ int main(int argc, char const *argv[])
     /*delete file*/
 
     /*total size*/
-
+    //count_dir_size(argv[1]);
     /*display all files in the dir*/
 
     /*
@@ -99,7 +120,7 @@ int main(int argc, char const *argv[])
     */
 
     /*list all proc from /procfs */
-    list_proc();
+    //list_proc();
 
     return 0;
 }
