@@ -111,8 +111,6 @@ int list_files(char *dir)
 
 int main(int argc, char const *argv[])
 {
-    list_proc(argv[1]);
-
     if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h"))
     {
         printf("Авторы: Заруднев Николай, Каширин Владислав, Бесаева Далия\n");
@@ -144,6 +142,11 @@ int main(int argc, char const *argv[])
     {
         list_proc(argv[2]);
     }
+    else
+    {
+        return 0;
+    }
+    
     return 0;
 }
 
