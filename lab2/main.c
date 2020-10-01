@@ -60,28 +60,20 @@ int list_proc(){
     return 0;
 }
 
-int count_dir_size(char *dir)
+int count_dir_size(const char *dir)
 {
-    struct dirent *pD;
-    struct stat file_stat;
-    int size = 0;
-
-    DIR *pDirec = opendir(dir);
-    while ((pD = readdir(pDirec)) != NULL)
-    {
-        if (stat(pD->d_name, &file_stat) == 0)
-        {
-            size += file_stat.st_size;
-        }
-
+    long long size = 0;
+    struct dirent *pDirent;
+    DIR *pDir = opendir (dir);
+    while ((pDirent = readdir(pDir)) != NULL) {
+        size += pDirent->d_reclen;
     }
-    printf("Общий размер файлов каталога %s равен %d байт\n\n", dir, size);
-    closedir(pDirec);
-
+    closedir (pDir);
+    printf("Общий размер файлов каталога %s равен %lld байт\n\n", dir, size);
     return 0;
 }
 
-int my_delete(char *dir)
+int my_delete(const char *dir)
 {
     printf ("Удаление файла: ");
    if (-1 == remove (dir))
@@ -98,7 +90,7 @@ int my_replace(const char *arg1, const char *arg2)
     my_delete(arg1);
 }
 
-int list_files(char *dir)
+int list_files(const char *dir)
 {
     struct dirent *pDirent;
     DIR *pDir = opendir (dir);
