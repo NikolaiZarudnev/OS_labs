@@ -140,7 +140,7 @@ int main(int argc, char const *argv[])
     }
     else if (!strcmp(argv[1], "--procfs") || !strcmp(argv[1], "-p"))
     {
-        list_proc(argv[2]);
+        list_proc();
     }
     else
     {
