@@ -44,7 +44,7 @@ int my_copy(const char *arg1, const char *arg2)
 }
 
 int list_proc(){
-    int fd;
+    FILE *stat;
     char buf[64];
     struct dirent *pDirent;
     char *proc_stat = malloc(20);
@@ -53,13 +53,15 @@ int list_proc(){
     {   
         if (isdigit(pDirent->d_name[0]))
         {
-            printf ("%s", pDirent->d_name);
             strcpy(proc_stat, "/proc/");
             strncat(proc_stat, pDirent->d_name, 5);
             strcat(proc_stat, "/stat");
-            fd = open(proc_stat, O_RDONLY);
-            read(fd, buf, 64);
-            printf("\t%s\n", buf);
+            stat = fopen(proc_stat,"r");
+            int pid, ppid;
+            char buf[64], status;
+            fscanf(stat, "%d %s %s %d", &pid, buf, buf, &ppid);
+            printf("%d\t%d\n", pid, ppid);
+            fclose(stat);
         }
     }
     closedir (pDir);
