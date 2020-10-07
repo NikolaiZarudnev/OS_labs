@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <ctype.h>
+#include <sys/stat.h>
 
 int my_copy(const char *arg1, const char *arg2)
 {
@@ -70,14 +71,25 @@ int list_proc(){
 
 int count_dir_size(const char *dir)
 {
-    long long size = 0;
-    struct dirent *pDirent;
-    DIR *pDir = opendir (dir);
-    while ((pDirent = readdir(pDir)) != NULL) {
-        size += pDirent->d_reclen;
+    struct dirent *pD;
+    struct stat file_stat;
+    int size = 0;
+    char file_path[16];
+    DIR *pDirec = opendir(dir);
+    
+    while ((pD = readdir(pDirec)) != NULL)
+    {
+        strcpy(file_path, dir);
+        strcat(file_path, "/");
+        strcat(file_path, pD->d_name);
+        if (stat(file_path, &file_stat) == 0)
+        {
+            size += file_stat.st_size;
+        }
     }
-    closedir (pDir);
-    printf("Общий размер файлов каталога %s равен %lld байт\n\n", dir, size);
+    printf("Общий размер файлов каталога %s равен %d байт\n\n", dir, size);
+    closedir(pDirec);
+
     return 0;
 }
 
@@ -111,6 +123,7 @@ int list_files(const char *dir)
 
 int main(int argc, char const *argv[])
 {
+    //count_dir_size("lab2/qwe");
     if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h"))
     {
         printf("Авторы: Заруднев Николай, Каширин Владислав, Бесаева Далия\n");
