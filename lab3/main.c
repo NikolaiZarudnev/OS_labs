@@ -18,10 +18,9 @@ int lab3()
   case 0:
           printf(" CHILD: Это процесс-потомок!\n");
           printf(" CHILD: Мой PID -- %d\n", getpid());
-          printf(" CHILD: PID моего родителя -- %d\n",
-              getppid());
+          printf(" CHILD: PID моего родителя -- %d\n", getppid());
           printf(" CHILD: Введите мой код возврата:");
-          scanf(" %d");
+          scanf(" %d", &rv);
           printf(" CHILD: Выход!\n");
           exit(rv);
   default:
@@ -29,9 +28,8 @@ int lab3()
           printf("PARENT: Мой PID -- %d\n", getpid());
           printf("PARENT: PID моего потомка %d\n",pid);
           printf("PARENT: Я жду, пока потомок не вызовет exit...\n");
-          wait(pid);
-          printf("PARENT: Код возврата потомка:%d\n",
-                   WEXITSTATUS(rv));
+          wait(&pid);
+          printf("PARENT: Код возврата потомка:%d\n", WEXITSTATUS(rv));
           printf("PARENT: Выход!\n");
   }
 }
