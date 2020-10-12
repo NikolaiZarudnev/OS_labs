@@ -123,8 +123,12 @@ int list_files(const char *dir)
 
 int main(int argc, char const *argv[])
 {
-    //count_dir_size("lab2/qwe");
-    if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h"))
+    if (argv[1] == NULL)
+    {
+        printf("Введите флаг\n");
+        printf("flags: %s, %s\n", argv[0], argv[1]);
+    }
+    else if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h"))
     {
         printf("Авторы: Заруднев Николай, Каширин Владислав, Бесаева Далия\n");
         printf("Доступные аргументы:\n\t-r: переместить файл\n\t-c: копировать файл\n\t-d: удалить файл\n\t-s: общий размер указанной директории или файла\n\t-f: отображение всех файлов указанной директории\n\t-p: отображение всех процессов из файловой системы procf");
@@ -155,10 +159,7 @@ int main(int argc, char const *argv[])
     {
         list_proc();
     }
-    else
-    {
-        return 0;
-    }
+
     
     return 0;
 }
