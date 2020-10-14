@@ -53,6 +53,27 @@ int create_pr_name(const char *name_programm, char *fl1, char *fl2, char *fl3)
 	}
 }
 
+int background_process(char *d, char *name_programm) 
+{
+    pid_t pid;
+	int rv;
+    pid = fork();
+
+    if (pid == 0) {
+        if (strcmp (d, "--demon") == 0) daemon (1, 0);
+        execl (name_programm, name_programm, NULL);
+        while (1) {
+            if (waitpid(pid, &rv, 0) == pid)
+            _exit (EXIT_FAILURE);
+        }
+    } else if (pid < 0)
+        rv = -1;
+    else if (waitpid (pid, &rv, 0) != 0)
+        rv = -1;
+
+    return rv;
+}
+
 int valid_l2_flag(char *fl1)
 {
     if (!strcmp(fl1, "-h") || !strcmp(fl1, "--help")    || 
@@ -65,6 +86,7 @@ int valid_l2_flag(char *fl1)
         return 1;
     return 0;      
 }
+
 int signalhandler(int sig)
 {
 	switch (sig)
@@ -103,7 +125,7 @@ int main(int argc, char *argv[])
     }
     else if (!strcmp(argv[1], "--demon")) //Если процесс нужно запустить в фоновом режиме
     {
-        //создаем демона внутри себя
+        background_process(argv[2], argv[3]);
     }
     else //Если процесс нужно запустить НЕ в фоне
     {
