@@ -13,7 +13,7 @@ int my_copy(const char *arg1, const char *arg2)
     fh1 = open(arg1, O_RDONLY);
     if (fh1 == -1)
     {
-        printf("faile is not open\n");
+        printf("file is not open\n");
         return -1;
     }
 
@@ -27,7 +27,7 @@ int my_copy(const char *arg1, const char *arg2)
     fh2 = creat(arg3, __S_IWRITE | __S_IREAD);
     if (fh2 == -1)
     {
-        printf("fail is not open\n");
+        printf("file is not created\n");
         return -1;
     }
     

@@ -20,6 +20,7 @@ int create_pr_lab2(char **flags)
         printf("  CHILD: Выполняю l2; c флагом %s\n", flags[1]);
         printf("***********************************************\n");
         execv("l2", flags);
+		kill(getppid(), SIGUSR1);//передаю родителю пользовательский сигнал SIGUSR1
   default:
         printf("PARENT: Это процесс-родитель!\n");
         printf("PARENT: Я жду, пока потомок не вызовет exit...\n");
@@ -27,6 +28,7 @@ int create_pr_lab2(char **flags)
         printf("***********************************************\n");
         printf("PARENT: Код возврата потомка:%d\n", WEXITSTATUS(rv));
         printf("PARENT: Выход!\n");
+        raise(SIGUSR2);//родитель сам себе посылает пользовательский сигнал SIGUSR1
   }
 }
 
@@ -41,34 +43,34 @@ int create_pr_name(const char *name_programm, char *fl1, char *fl2, char *fl3)
 	case 0:
 	    printf("  CHILD: Это процесс-потомок!\n");
 	    printf("  CHILD: Выполняю %s; c флагом %s\n", name_programm, fl1);
-	    execl(name_programm, " ", fl1, fl2, fl3, NULL);
-		kill(getppid(), SIGUSR1);//передаю родителю пользовательский сигнал SIGUSR1
+	    execl(name_programm, name_programm, fl1, fl2, fl3, NULL);
+
 	default:
 	    printf("PARENT: Это процесс-родитель!\n");
 	    printf("PARENT: Я жду, пока потомок не вызовет exit...\n");
 	    wait(&pid);
 	    printf("PARENT: Код возврата потомка:%d\n", WEXITSTATUS(rv));
 	    printf("PARENT: Выход!\n");
-		raise(SIGUSR2);//родитель сам себе посылает пользовательский сигнал SIGUSR1
+		
 	}
 }
 
-int background_process(char *d, char *name_programm) 
+int background_process(char *name_programm, char *arg1, char *arg2, char *arg3) 
 {
     pid_t pid;
 	int rv;
     pid = fork();
-
     if (pid == 0) {
-        if (strcmp (d, "--demon") == 0) daemon (1, 0);
-        execl (name_programm, name_programm, NULL);
+        daemon (1, 0);
+        execl (name_programm, name_programm, arg1, arg2, arg3, NULL);
         while (1) {
-            if (waitpid(pid, &rv, 0) == pid)
-            _exit (EXIT_FAILURE);
+            if (waitpid(pid, &rv, 0) == pid) {
+                _exit (EXIT_FAILURE);
+            }
         }
     } else if (pid < 0)
         rv = -1;
-    else if (waitpid (pid, &rv, 0) != 0)
+    else if (waitpid (pid, &rv, 0) != pid)
         rv = -1;
 
     return rv;
@@ -125,11 +127,11 @@ int main(int argc, char *argv[])
     }
     else if (!strcmp(argv[1], "--demon")) //Если процесс нужно запустить в фоновом режиме
     {
-        background_process(argv[2], argv[3]);
+        background_process(argv[2], argv[3], argv[4], argv[5]);
     }
     else //Если процесс нужно запустить НЕ в фоне
     {
-        create_pr_name_(argv[2], argv[3], argv[4], argv[5]);
+        create_pr_name(argv[1], argv[2], argv[3], argv[4]);
     }
     return 0;
 }
