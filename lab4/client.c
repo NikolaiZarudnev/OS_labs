@@ -9,7 +9,7 @@
 #include <sys/types.h>
 #include <time.h>
 
-int main()
+int main(int argc, char *argv[])
 {
     // структура для сокета
     struct sockaddr_in server;
@@ -19,10 +19,11 @@ int main()
     int sock = socket(AF_INET, SOCK_STREAM, 0); // создаем сокет
     connect(sock, &server, sizeof(server)); // соединяемся с сервером
     // отправка сообщения
-    send(sock, "Hello", 6, 0);
+    send(sock, argv[1], 6, 0);
     char buf[255] = "";
-    recv(sock, buf, sizeof(buf), 0);
-    printf("Сервер прислал: %s\n",buf);
+    int x = 0;
+    int c = recv(sock, &x, sizeof(x), 0);
+    printf("Server sent: %d, check = %d\n", x, c);
     close(sock);
 }
    
