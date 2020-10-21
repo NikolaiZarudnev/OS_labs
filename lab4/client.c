@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
     send(sock, argv[1], 6, 0);
     char buf[255] = "";
     int x = 0;
-    int c = recv(sock, &x, sizeof(x), 0);
-    printf("Server sent: %d, check = %d\n", x, c);
+    recv(sock, &x, sizeof(x), 0);
+    printf("Server sent: %d\n", x);
     close(sock);
 }
    

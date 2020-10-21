@@ -24,43 +24,48 @@ int process(char *arg){
     return x;
     pthread_exit(0);
 }
-void server_client(int q, int w, int e)
+int new_client(int sock)
 {
-    printf("%d %d %d\n", q, w, e);
+    char buf[255];
+    int size;
+    int newsock, clnlen;
+    int x;
+    struct sockaddr_in client;
+    newsock = accept(sock, &client, &clnlen); // появление нового клиента
+    printf("New client: %s\n",inet_ntoa(client.sin_addr));
+    while((size = recv(newsock, buf, sizeof(buf), 0)) != 0)
+    {
+        x = process(buf);
+        send(newsock, &x, sizeof(x), 0); // отправляем эхо
+    } // пока получаем от клиента
+    close(newsock);
+    return 0;
+}
+
+int main(int argc, char *argv[])
+{
     struct sockaddr_in server, client;
     int sock = socket(AF_INET, SOCK_STREAM, 0); // создание сокета
-    int size;
-    char buf[255];
+    
+    
     // структура для сервера
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY; // 0.0.0.0
     server.sin_port = htons(2019); // порт сервера
     bind(sock, &server, sizeof(server)); // связка с сокетом
     listen(sock,5); // размер очереди
-    int x = 0;
+    pthread_t thread; //создаем идентификатор потока
     while(1)
     {
-        int newsock, clnlen;
-        newsock = accept(sock, &client, &clnlen); // появление нового клиента
-        printf("New client: %s\n",inet_ntoa(client.sin_addr));
-        while((size = recv(newsock, buf, sizeof(buf), 0)) != 0)
-        {
-            x = process(buf);
-            send(newsock, &x, sizeof(x), 0); // отправляем эхо
-        } // пока получаем от клиента
-        close(newsock);
+        pthread_create(&thread, NULL, new_client, sock);
+        pthread_join(thread, NULL);
+        
     }
-    close(sock);
-}
-int main(int argc, char *argv[])
-{
     
-    //создаем идентификатор потока
-    pthread_t thread;
-
-    pthread_create(&thread, NULL, server_client, NULL);
+    close(sock);
+    
     //ждем завершения потока
-    pthread_join(thread, NULL);
+    
     //создаем поток по идентификатору thread и функции потока threadFunc
     //и передаем потоку указатель на данные thread_data
     
