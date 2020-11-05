@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <time.h>
 #include <pthread.h>
+#include <dlfcn.h>
 int process(char *arg){
     int x = 0;
     if (!strcmp(arg, "-d"))
@@ -32,6 +33,24 @@ int new_client(int sock)
     int x;
     struct sockaddr_in client;
     newsock = accept(sock, &client, &clnlen); // появление нового клиента
+
+    char *error = "err\n";
+    void *handle = dlopen ("/home/nikolay/Рабочий стол/OS_labs/lab5_example/libcookies.so", RTLD_LAZY);
+    if (!handle) {
+        fputs (dlerror(), stderr);
+        exit(-1);
+    }
+    void (*world)() = dlsym(handle, "cookie");
+    if ((error = dlerror()) != NULL) {
+        fprintf (stderr, "%s\n", error);
+        printf("err dlsym\n");
+        exit(-1);
+    }
+    (*world)();
+    printf("Done\n");
+    //printf("asd", (*world));
+    dlclose(handle);
+
     printf("New client: %s\n",inet_ntoa(client.sin_addr));
     while((size = recv(newsock, buf, sizeof(buf), 0)) != 0)
     {
