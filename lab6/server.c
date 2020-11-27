@@ -23,38 +23,43 @@ int process(char *arg){
         x++;
     }
     return x;
-    pthread_exit(0);
 }
 int new_client(int sock)
 {
+    FILE *ERRstat;
     char buf[255];
     int size;
     int newsock, clnlen;
     int x;
     struct sockaddr_in client;
     newsock = accept(sock, &client, &clnlen); // появление нового клиента
-
-    char *error = "err\n";
-    void *handle = dlopen ("/home/nikolay/Рабочий стол/OS_labs/lab5/libcookies.so", RTLD_LAZY);
+    char *error = "";
+    void *handle = dlopen ("/home/nikolay/Рабочий стол/OS_labs/lab6/libcookies.so", RTLD_LAZY);
     if (!handle) {
         fputs (dlerror(), stderr);
         exit(-1);
     }
-    void (*world)() = dlsym(handle, "cookie");
-    if ((error = dlerror()) != NULL) {
-        fprintf (stderr, "%s\n", error);
-        printf("err dlsym\n");
-        exit(-1);
-    }
-    (*world)();
-    printf("Done\n");
-    //printf("asd", (*world));
-    dlclose(handle);
+    
 
     printf("New client: %s\n",inet_ntoa(client.sin_addr));
     while((size = recv(newsock, buf, sizeof(buf), 0)) != 0)
     {
-        x = process(buf);
+        x = -3;
+        if (!strcmp(buf, "-d") || !strcmp(buf, "-i"))
+        {
+            x = process(buf);
+        }
+
+            void (*world)() = dlsym(handle, "cookie");
+            if ((error = dlerror()) != NULL) {
+                ERRstat = fopen("ERRORS.txt", "a+");
+                fprintf (ERRstat, "%s\n %d", error);
+                fclose(ERRstat);
+                exit(-1);
+            }
+            (*world)();
+            x = 100;
+            dlclose(handle);
         send(newsock, &x, sizeof(x), 0); // отправляем эхо
     } // пока получаем от клиента
     close(newsock);
