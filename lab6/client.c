@@ -19,11 +19,19 @@ int main(int argc, char *argv[])
     int sock = socket(AF_INET, SOCK_STREAM, 0); // создаем сокет
     connect(sock, &server, sizeof(server)); // соединяемся с сервером
     // отправка сообщения
-    send(sock, argv[1], 6, 0);
-    char buf[255] = "";
+    char command[5][32];
+    for (size_t i = 0; i < argc; i++)
+    {
+        strcpy(command[i+1], "\0");
+        strcpy(command[i], argv[i]);
+    }
+    
+    //printf("%s\n", argv[1]);
+    send(sock, command, sizeof(command), 0);
+    char buf[1024];
     int x = 0;
-    recv(sock, &x, sizeof(x), 0);
-    printf("Server sent: %d\n", x);
+    recv(sock, buf, sizeof(buf), 0);
+    printf("Client recieved:\n%s\n", buf);
     close(sock);
 }
    

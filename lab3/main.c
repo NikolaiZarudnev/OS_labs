@@ -6,6 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/wait.h>
+#include <signal.h>
 
 int create_pr_lab2(char **flags)
 {
